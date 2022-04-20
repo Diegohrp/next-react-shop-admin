@@ -3,6 +3,8 @@ import {useAuth} from '@hooks/useAuth';
 import {LockClosedIcon} from '@heroicons/react/solid';
 
 export default function LoginPage() {
+  //Para el error
+  const [error, setError] = React.useState('');
   //Utilizamos el custom hook useAuth()
   const auth = useAuth();
   const emailRef = React.useRef(null);
@@ -16,7 +18,16 @@ export default function LoginPage() {
       la info solicitada (email y password). 
       Si la promesa se cumple, imprimimos login success
     */
-    auth.signIn(email, password).then(() => console.log('login success'));
+    auth
+      .signIn(email, password)
+      .then((x) => {
+        console.log(x);
+        setError(false);
+      })
+      .catch((err) => {
+        setError(`Unauthorized: ${err.message}`);
+        console.log(error);
+      });
   };
 
   return (
@@ -108,6 +119,16 @@ export default function LoginPage() {
           </form>
         </div>
       </div>
+      {!!error && (
+        <div role="alert">
+          <div class="bg-red-500 text-white font-bold rounded-t px-4 py-2">
+            Error
+          </div>
+          <div class="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+            <p>{error}</p>
+          </div>
+        </div>
+      )}
     </>
   );
 }

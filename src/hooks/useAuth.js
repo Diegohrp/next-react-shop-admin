@@ -29,16 +29,22 @@ function useProviderAuth() {
         'Content-Type': 'application/json',
       },
     };
-    /*Axios devuelve un objeto con un elemento llamado data
-      le cambiamos el nombre a access_token ya que eso devuelve la API
-    */
+    //Axios devuelve un objeto con un elemento llamado data
     //axios.post(endpoint,infoAMandar,options)
-    const {data: access_token} = await axios.post(
+    const {data} = await axios.post(
       endPoints.auth.login,
       {email, password},
       options
     );
-    console.log(access_token);
+    //data también es un objeto
+    //La API nos devuelve un access token
+    //Validamos si existe el access token y lo guardamos en una Cookie
+    if (data.access_token) {
+      //Cookie.set("nombre",valor,{expira:tiempo});
+      Cookie.set('token', data.access_token, {expires: 5});
+    }
+
+    return data;
   };
   //Esto se retorna a auth para pasarse al value del provider y así acceder a esta info
   //Desde cualquier parte de la aplicación
