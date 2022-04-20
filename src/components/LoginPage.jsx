@@ -1,7 +1,10 @@
 import React from 'react';
+import {useAuth} from '@hooks/useAuth';
 import {LockClosedIcon} from '@heroicons/react/solid';
 
 export default function LoginPage() {
+  //Utilizamos el custom hook useAuth()
+  const auth = useAuth();
   const emailRef = React.useRef(null);
   const passwordRef = React.useRef(null);
 
@@ -9,8 +12,11 @@ export default function LoginPage() {
     event.preventDefault();
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
-
-    console.table({email, password});
+    /*Accedemos a la función signIn del custom hook, le enviamos 
+      la info solicitada (email y password). 
+      Si la promesa se cumple, imprimimos login success
+    */
+    auth.signIn(email, password).then(() => console.log('login success'));
   };
 
   return (
