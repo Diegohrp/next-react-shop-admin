@@ -42,6 +42,14 @@ function useProviderAuth() {
     if (data.access_token) {
       //Cookie.set("nombre",valor,{expira:tiempo});
       Cookie.set('token', data.access_token, {expires: 5});
+
+      //Añadimos el token al header de las peticiones como bearer token
+      //Es decir, un token de acceso o autorización
+      axios.defaults.headers.Authorization = `Bearer ${data.access_token}`;
+      //Solicitamos los datos del usuario en una nueva petición
+      const {data: user} = await axios.get(endPoints.auth.profile);
+      console.log(user);
+      setUser(user);
     }
 
     return data;
