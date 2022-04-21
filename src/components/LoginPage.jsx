@@ -1,6 +1,7 @@
 import React from 'react';
 import {useAuth} from '@hooks/useAuth';
 import {LockClosedIcon} from '@heroicons/react/solid';
+import {useRouter} from 'next/router';
 
 export default function LoginPage() {
   //Para el error
@@ -9,7 +10,7 @@ export default function LoginPage() {
   const auth = useAuth();
   const emailRef = React.useRef(null);
   const passwordRef = React.useRef(null);
-
+  const router = useRouter();
   const submitHandle = (event) => {
     event.preventDefault();
     const email = emailRef.current.value;
@@ -20,9 +21,10 @@ export default function LoginPage() {
     */
     auth
       .signIn(email, password)
-      .then((x) => {
-        console.log(x);
+      .then(() => {
         setError(false);
+        //Si la promesa se resuelve, redireccionamos al dashboard
+        router.push('/dashboard');
       })
       .catch((err) => {
         setError(`Unauthorized: ${err.message}`);
@@ -96,7 +98,7 @@ export default function LoginPage() {
 
               <div className="text-sm">
                 <a
-                  href="#"
+                  href="/"
                   className="font-medium text-indigo-600 hover:text-indigo-500">
                   Forgot your password?
                 </a>

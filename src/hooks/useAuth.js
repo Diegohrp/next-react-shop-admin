@@ -47,9 +47,9 @@ function useProviderAuth() {
       //Es decir, un token de acceso o autorización
       axios.defaults.headers.Authorization = `Bearer ${data.access_token}`;
       //Solicitamos los datos del usuario en una nueva petición
-      const {data: user} = await axios.get(endPoints.auth.profile);
-      console.log(user);
-      setUser(user);
+      const {data: LoggedUser} = await axios.get(endPoints.auth.profile);
+      console.log(LoggedUser);
+      setUser(LoggedUser);
     }
 
     return data;
