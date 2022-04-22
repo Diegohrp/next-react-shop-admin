@@ -23,7 +23,8 @@ function useFetch(endpoint) {
     } catch (err) {
       console.log(err);
     }
-  }, []);
+    //Si el endpoint cambia, se vuelve a ejecutar el UseEffect, se hace la petición de nuevo
+  }, [endpoint]);
   //Retornamos la data de la petición
   return data;
 }

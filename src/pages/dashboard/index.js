@@ -1,24 +1,25 @@
+import React from 'react';
 import {endPoints} from '@services/api';
 import {useFetch} from '@hooks/useFetch';
+import Pagination from '@components/Pagination';
 
-const people = [
-  {
-    name: 'Jane Cooper',
-    title: 'Regional Paradigm Technician',
-    department: 'Optimization',
-    role: 'Admin',
-    email: 'jane.cooper@example.com',
-    image:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60',
-  },
-];
-const PRODUCTS_LIMIT = 22;
-const PRODUCTS_OFFSET = 0;
+//Parámetro que requiere la API para determinar cuántos productos llamar
+const PRODUCTS_LIMIT = 5;
+
 export default function Dashboard() {
+  /*El offset es un parámetro que requiere la API que indica a partir 
+    de qué producto en la lista de todos los productos, obtener. 
+  */
+  const [productsOffset, setProductsOffset] = React.useState(0);
+  //El Pagination modifica productsOffset, al cambiar de página cambia el offset
+
+  /*Custom Hook useFetch, recibe el endpoint
+    el endpoint .getProducts(limit,offset)
+  */
   const products = useFetch(
-    endPoints.products.getProducts(PRODUCTS_LIMIT, PRODUCTS_OFFSET)
+    endPoints.products.getProducts(PRODUCTS_LIMIT, productsOffset)
   );
-  console.log(products);
+  const totalProducts = useFetch(endPoints.products.getProducts(0, 0)).length;
 
   return (
     <>
@@ -109,6 +110,14 @@ export default function Dashboard() {
               </table>
             </div>
           </div>
+          {totalProducts > 0 && (
+            <Pagination
+              totalItems={totalProducts}
+              itemsPerPage={PRODUCTS_LIMIT}
+              setOffset={setProductsOffset}
+              paginationLenght={3}
+            />
+          )}
         </div>
       </div>
     </>
