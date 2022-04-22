@@ -62,7 +62,7 @@ function Pagination({totalItems, itemsPerPage, paginationLenght, setOffset}) {
     if (currentPage > 1) {
       //Le restamos 1 a la página actual y lo asignamos al estado
       //De esta manera volvemos a la página anterior
-      setCurrentPage(currentPage--);
+      setCurrentPage(currentPage - 1);
       //Modificamos el offset
       setOffset((currentPage - 2) * itemsPerPage);
     }
@@ -71,7 +71,7 @@ function Pagination({totalItems, itemsPerPage, paginationLenght, setOffset}) {
   const nextPage = () => {
     //Validamos que no nos encontremos en la última página
     if (currentPage < totalPages) {
-      setCurrentPage(currentPage++);
+      setCurrentPage(currentPage + 1);
       setOffset(currentPage * itemsPerPage);
     }
   };
