@@ -17,5 +17,6 @@ module.exports = {
     semi: ['error', 'always'],
     '@next/next/no-html-link-for-pages': 0,
     '@next/next/no-img-element': 0,
+    'no-unused-vars': 0,
   },
 };

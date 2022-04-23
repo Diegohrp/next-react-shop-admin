@@ -1,12 +1,16 @@
 import React from 'react';
-import {endPoints} from '@services/api';
-import {useFetch} from '@hooks/useFetch';
+import {Fragment} from 'react';
 import Pagination from '@components/Pagination';
-import {Chart} from '@common/Chart';
+import Modal from '@common/Modal';
+import {PlusIcon, ChevronDownIcon} from '@heroicons/react/solid';
+import {Menu} from '@headlessui/react';
+import {FormProduct} from '@components/FormProduct';
+
 //Parámetro que requiere la API para determinar cuántos productos llamar
 const PRODUCTS_LIMIT = 5;
 
-export default function Dashboard() {
+export default function Products() {
+  const [open, setOpen] = React.useState(false);
   /*El offset es un parámetro que requiere la API que indica a partir 
     de qué producto en la lista de todos los productos, obtener. 
   */
@@ -14,72 +18,42 @@ export default function Dashboard() {
   //El Pagination modifica productsOffset, al cambiar de página cambia el offset
 
   /*Custom Hook useFetch, recibe el endpoint
-    el endpoint .getProducts(limit,offset)
-  */
-  const products = useFetch(
-    endPoints.products.getProducts(PRODUCTS_LIMIT, productsOffset)
-  );
-  const allProducts = useFetch(endPoints.products.getProducts(0, 0));
-
-  const totalProducts = allProducts.length;
-
-  const categoryNames = allProducts?.map((item) => item.category.name);
-
-  const reducer = (prev, curr) => {
-    /*prev es un acumulador y curr es el elemento actual del array que se recibe como parámetro,
-      es decir, un nombre de una categoría. 
-      La función .reduce() recorre todo el array, curr adquiere el valor de cada posición del array
-      prev[curr] es equivalente a tener obj[elemento]
-      Imaginemos el siguiente caso: 
-      prev = {shoes:1, others:3, clothes: 3}
-      Al hacer prev[curr] donde curr=shoes estámos llamando al valor del objeto prev cuya clave es shoes,
-      para este caso sería el valor de 1
+      el endpoint .getProducts(limit,offset)
     */
-    prev[curr] = ++prev[curr] || 1;
-    /*En la línea anterior accedemos al valor del objeto prev cuya clave es curr, recordemos que curr es 
-      un nombre de categoría que cambia con cada iteración. Si esa clave-valor no existe, como tiene un ||
-      entonces crea la clave-valor y le asigna el valor de 1, el primer conteo.
-      Si existe, entonces accede a ese valor y lo incrementa en 1, hace otro conteo
-    */
-
-    return prev; //En cada iteración retornamos el objeto prev
-
-    /*Ejemplo:
-   
-      Primera iteración: prev = {}, curr = "Shoes"
-      prev[curr] no existe, es decir no existe prev = {"Shoes":algunNumero}, entonces se le asigna 1,
-      quedando: prev = {"Shoes":1}
-      
-      Segunda iteración: se retornó prev que es nuestro valor acumulado, actualmente prev = {"Shoes":1}
-      Ahora curr = "Others", entonces tendríamos: 
-      prev = {"Shoes":1,"Others":1}
-
-      Tercera iteración: prev = {"Shores:1","Others":1} curr = "Shoes"
-      Accedemos a prev[curr], esta vez sí existe, como existe incrementamos su valor actual, quedando ahora en 2
-      prev = {"Shoes":2,"Others":1}
-
-    */
-  };
-
-  /*Creamos la función para contar, en la función .reduce() pasamos nuestra función reducer y el valor inicial
-    de prev que es un objeto vacío.
-  */
-  const countCategories = (array) => array.reduce(reducer, {});
-
-  const data = {
-    datasets: [
-      {
-        label: 'Categories',
-        data: countCategories(categoryNames),
-        borderWidth: 2,
-        backgroundColor: ['#ffbb11', '#c0c0c0', '#50AF95', 'f3ba2f', '#2a71d0'],
-      },
-    ],
-  };
-
+  const [products, setProducts] = React.useState([]);
+  const totalProducts = 3;
   return (
     <>
-      <Chart className="mb-8 mt-2" chartData={data} />
+      <div className="lg:flex lg:items-center lg:justify-between mb-8">
+        <div className="flex-1 min-w-0">
+          <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+            List of products
+          </h2>
+        </div>
+        <div className="mt-5 flex lg:mt-0 lg:ml-4">
+          <span className="sm:ml-3">
+            <button
+              type="button"
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              onClick={() => setOpen(true)}>
+              <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+              Add product
+            </button>
+          </span>
+
+          {/* Dropdown */}
+          <Menu as="span" className="ml-3 relative sm:hidden">
+            <Menu.Button className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              More
+              <ChevronDownIcon
+                className="-mr-1 ml-2 h-5 w-5 text-gray-500"
+                aria-hidden="true"
+              />
+            </Menu.Button>
+          </Menu>
+        </div>
+      </div>
+
       <div className="flex flex-col">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
@@ -176,6 +150,9 @@ export default function Dashboard() {
             />
           )}
         </div>
+        <Modal open={open} setOpen={setOpen}>
+          <FormProduct />
+        </Modal>
       </div>
     </>
   );
