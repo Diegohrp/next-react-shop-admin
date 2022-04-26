@@ -11,7 +11,7 @@ function Pagination({totalItems, itemsPerPage, paginationLenght, setOffset}) {
   /*Calculamos el total de páginas a partir del número de items en la API
     y del número de items que se quieran por página
   */
-  const totalPages = Math.round(totalItems / itemsPerPage); //se redondea al entero más cercano
+  const totalPages = Math.ceil(totalItems / itemsPerPage); //se redondea al entero mayor
 
   /*El Pagination es un array que va a cambiar los elementos numéricos que muestra.
     Calculamos el último elemento numérico que mostrará sumando la página actual más el tamaño

@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import {useAlert} from './useAlert';
 //Custom Hook para hacer peticiones de los productos
 function useFetch(endpoint) {
   //Creamos el estado donde guardaremos la data de la petición
@@ -24,6 +25,8 @@ function useFetch(endpoint) {
       console.log(err);
     }
     //Si el endpoint cambia, se vuelve a ejecutar el UseEffect, se hace la petición de nuevo
+    //Cuando el estado del alert cambia, se debió añadir un nuevo producto
+    //Entonces se hace la petición de nuevo
   }, [endpoint]);
   //Retornamos la data de la petición
   return data;

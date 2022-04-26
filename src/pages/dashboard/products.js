@@ -1,29 +1,70 @@
 import React from 'react';
-import {Fragment} from 'react';
 import Pagination from '@components/Pagination';
 import Modal from '@common/Modal';
-import {PlusIcon, ChevronDownIcon} from '@heroicons/react/solid';
+import {PlusIcon, ChevronDownIcon, XCircleIcon} from '@heroicons/react/solid';
 import {Menu} from '@headlessui/react';
 import {FormProduct} from '@components/FormProduct';
-
+import {endPoints} from '@services/api';
+import {Alert} from '@common/Alert';
+import {useAlert} from '@hooks/useAlert';
+import {deleteProduct} from '@services/api/products';
+import axios from 'axios';
 //Parámetro que requiere la API para determinar cuántos productos llamar
 const PRODUCTS_LIMIT = 5;
 
 export default function Products() {
+  //Para el Alert
+  const {alert, setAlert, toggleAlert} = useAlert();
+
   const [open, setOpen] = React.useState(false);
+  const [products, setProducts] = React.useState([]);
+  const [totalProducts, setTotalProducts] = React.useState(0);
   /*El offset es un parámetro que requiere la API que indica a partir 
     de qué producto en la lista de todos los productos, obtener. 
   */
   const [productsOffset, setProductsOffset] = React.useState(0);
   //El Pagination modifica productsOffset, al cambiar de página cambia el offset
 
-  /*Custom Hook useFetch, recibe el endpoint
-      el endpoint .getProducts(limit,offset)
-    */
-  const [products, setProducts] = React.useState([]);
-  const totalProducts = 3;
+  React.useEffect(() => {
+    const fetchProducts = async (endPoint, endPointT) => {
+      const response = await axios.get(endPoint);
+      setProducts(response.data);
+      const response2 = await axios.get(endPointT);
+      setTotalProducts(response2.data.length);
+    };
+    try {
+      fetchProducts(
+        endPoints.products.getProducts(PRODUCTS_LIMIT, productsOffset),
+        endPoints.products.getProducts(0, 0)
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  }, [productsOffset, alert]);
+
+  const handleDelete = (id) => {
+    deleteProduct(id)
+      .then(() =>
+        setAlert({
+          active: true,
+          message: 'Product deleted successfully',
+          type: 'success',
+          autoClose: false,
+        })
+      )
+      .catch((err) =>
+        setAlert({
+          active: true,
+          message: err.message,
+          type: 'error',
+          autoClose: false,
+        })
+      );
+  };
+
   return (
     <>
+      <Alert alert={alert} handleClose={toggleAlert} />
       <div className="lg:flex lg:items-center lg:justify-between mb-8">
         <div className="flex-1 min-w-0">
           <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
@@ -129,11 +170,11 @@ export default function Products() {
                         </a>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a
-                          href="/"
-                          className="text-indigo-600 hover:text-indigo-900">
-                          Delete
-                        </a>
+                        <XCircleIcon
+                          className="flex-shrink-0 h-6 w-6 text-red-500 cursor-pointer"
+                          aria-hidden="true"
+                          onClick={() => handleDelete(product.id)}
+                        />
                       </td>
                     </tr>
                   ))}
@@ -151,7 +192,7 @@ export default function Products() {
           )}
         </div>
         <Modal open={open} setOpen={setOpen}>
-          <FormProduct />
+          <FormProduct setAlert={setAlert} setOpen={setOpen} />
         </Modal>
       </div>
     </>

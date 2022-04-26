@@ -1,8 +1,8 @@
 import React from 'react';
+import {addProduct} from '@services/api/products';
 
-export function FormProduct() {
+export function FormProduct({setAlert, setOpen}) {
   const formRef = React.useRef(null);
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(formRef.current);
@@ -14,7 +14,26 @@ export function FormProduct() {
       images: [formData.get('images').name],
     };
 
-    console.log(data);
+    addProduct(data)
+      .then(() => {
+        setAlert({
+          active: true,
+          message: 'Product added successfully',
+          type: 'success',
+          autoClose: false,
+        });
+        //Cerramos el modal de formulario
+        setOpen(false);
+      })
+      .catch((err) => {
+        setAlert({
+          active: true,
+          message: err.message,
+          type: 'error',
+          autoClose: false,
+        });
+        setOpen(false);
+      });
   };
 
   return (
