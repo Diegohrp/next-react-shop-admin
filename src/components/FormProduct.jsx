@@ -1,7 +1,9 @@
 import React from 'react';
 import {addProduct} from '@services/api/products';
 
-export function FormProduct({setAlert, setOpen}) {
+export function FormProduct({setAlert, setOpen, product}) {
+  const categorySelect = React.useRef(null);
+
   const formRef = React.useRef(null);
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -35,6 +37,13 @@ export function FormProduct({setAlert, setOpen}) {
         setOpen(false);
       });
   };
+  //Para cuando se quiere editar un producto y se hizo el llamado a su info
+  //Asignamos de esa maneta la categoría en el select
+  React.useEffect(() => {
+    if (product) {
+      categorySelect.current.children[product?.category.id - 1].selected = true;
+    }
+  }, [product]);
 
   return (
     <form ref={formRef} onSubmit={handleSubmit}>
@@ -47,6 +56,7 @@ export function FormProduct({setAlert, setOpen}) {
                 className="block text-sm font-medium text-gray-700">
                 Title
                 <input
+                  defaultValue={product?.title}
                   type="text"
                   name="title"
                   id="title"
@@ -60,6 +70,7 @@ export function FormProduct({setAlert, setOpen}) {
                 className="block text-sm font-medium text-gray-700">
                 Price
                 <input
+                  defaultValue={product?.price}
                   type="number"
                   name="price"
                   id="price"
@@ -73,6 +84,7 @@ export function FormProduct({setAlert, setOpen}) {
                 className="block text-sm font-medium text-gray-700">
                 Category
                 <select
+                  ref={categorySelect}
                   id="category"
                   name="category"
                   autoComplete="category-name"
@@ -92,6 +104,7 @@ export function FormProduct({setAlert, setOpen}) {
                 className="block text-sm font-medium text-gray-700">
                 Description
                 <textarea
+                  defaultValue={product?.description}
                   name="description"
                   id="description"
                   autoComplete="description"
