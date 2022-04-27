@@ -3,7 +3,11 @@ import {FormProduct} from '@components/FormProduct';
 import {useRouter} from 'next/router';
 import axios from 'axios';
 import {endPoints} from '@services/api';
+import {Alert} from '@common/Alert';
+import {useAlert} from '@hooks/useAlert';
 function Edit() {
+  const {alert, setAlert, toggleAlert} = useAlert();
+
   const [product, setProduct] = React.useState(null);
   const router = useRouter();
   React.useEffect(() => {
@@ -22,7 +26,12 @@ function Edit() {
       //Si el id no existe, mandamos a notFound
       .catch((err) => router.push('/notFound'));
   }, [router?.isReady]);
-  return product ? <FormProduct product={product} /> : null;
+  return product ? (
+    <>
+      <Alert alert={alert} handleClose={toggleAlert} />
+      <FormProduct product={product} alert={alert} setAlert={setAlert} />
+    </>
+  ) : null;
 }
 
 export default Edit;

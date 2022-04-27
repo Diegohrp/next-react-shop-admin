@@ -1,7 +1,8 @@
 import React from 'react';
-import {addProduct} from '@services/api/products';
-
+import {addProduct, updateProduct} from '@services/api/products';
+import {Router, useRouter} from 'next/router';
 export function FormProduct({setAlert, setOpen, product}) {
+  const router = useRouter();
   const categorySelect = React.useRef(null);
 
   const formRef = React.useRef(null);
@@ -16,26 +17,49 @@ export function FormProduct({setAlert, setOpen, product}) {
       images: [formData.get('images').name],
     };
 
-    addProduct(data)
-      .then(() => {
-        setAlert({
-          active: true,
-          message: 'Product added successfully',
-          type: 'success',
-          autoClose: false,
+    if (product) {
+      updateProduct(product.id, data)
+        .then((response) => {
+          setAlert({
+            active: true,
+            message: 'Product updated successfully',
+            type: 'success',
+            autoClose: false,
+          });
+          setTimeout(() => router.push('/dashboard/products'), 1500);
+
+          console.log(response);
+        })
+        .catch((error) => {
+          setAlert({
+            active: true,
+            message: error.message,
+            type: 'error',
+            autoClose: false,
+          });
         });
-        //Cerramos el modal de formulario
-        setOpen(false);
-      })
-      .catch((err) => {
-        setAlert({
-          active: true,
-          message: err.message,
-          type: 'error',
-          autoClose: false,
+    } else {
+      addProduct(data)
+        .then(() => {
+          setAlert({
+            active: true,
+            message: 'Product added successfully',
+            type: 'success',
+            autoClose: false,
+          });
+          //Cerramos el modal de formulario
+          setOpen(false);
+        })
+        .catch((err) => {
+          setAlert({
+            active: true,
+            message: err.message,
+            type: 'error',
+            autoClose: false,
+          });
+          setOpen(false);
         });
-        setOpen(false);
-      });
+    }
   };
   //Para cuando se quiere editar un producto y se hizo el llamado a su info
   //Asignamos de esa maneta la categoría en el select

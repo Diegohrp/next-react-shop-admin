@@ -8,6 +8,7 @@ import {endPoints} from '@services/api';
 import {Alert} from '@common/Alert';
 import {useAlert} from '@hooks/useAlert';
 import {deleteProduct} from '@services/api/products';
+import Link from 'next/link';
 import axios from 'axios';
 //Parámetro que requiere la API para determinar cuántos productos llamar
 const PRODUCTS_LIMIT = 5;
@@ -163,11 +164,11 @@ export default function Products() {
                         {product.id}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a
-                          href="/"
-                          className="text-indigo-600 hover:text-indigo-900">
-                          Edit
-                        </a>
+                        <Link href={`/dashboard/edit/${product.id}`}>
+                          <div className="text-indigo-600 hover:text-indigo-900 cursor-pointer">
+                            Edit
+                          </div>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <XCircleIcon
