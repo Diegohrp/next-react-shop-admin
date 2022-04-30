@@ -1,14 +1,17 @@
 import {MainLayout} from '@layout/MainLayout';
 import {ProviderAuth} from '@hooks/useAuth';
+import {AuthContext} from 'context/AuthContext';
+import {useAuthState} from '@hooks/useAuthState';
 import '@styles/tailwind.css';
 
 function MyApp({Component, pageProps}) {
+  const value = useAuthState();
   return (
-    <ProviderAuth>
+    <AuthContext.Provider value={value}>
       <MainLayout>
         <Component {...pageProps} />
       </MainLayout>
-    </ProviderAuth>
+    </AuthContext.Provider>
   );
 }
 

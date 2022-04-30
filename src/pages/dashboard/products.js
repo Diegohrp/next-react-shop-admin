@@ -10,6 +10,7 @@ import {useAlert} from '@hooks/useAlert';
 import {deleteProduct} from '@services/api/products';
 import Link from 'next/link';
 import axios from 'axios';
+
 //Parámetro que requiere la API para determinar cuántos productos llamar
 const PRODUCTS_LIMIT = 5;
 

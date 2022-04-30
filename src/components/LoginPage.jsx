@@ -1,13 +1,15 @@
 import React from 'react';
-import {useAuth} from '@hooks/useAuth';
+import {AuthContext} from 'context/AuthContext';
 import {LockClosedIcon} from '@heroicons/react/solid';
 import {useRouter} from 'next/router';
 
 export default function LoginPage() {
   //Para el error
   const [error, setError] = React.useState('');
-  //Utilizamos el custom hook useAuth()
-  const auth = useAuth();
+
+  //Utilizamos el custom hook useAuthState()
+  const {signIn} = React.useContext(AuthContext);
+
   const emailRef = React.useRef(null);
   const passwordRef = React.useRef(null);
   const router = useRouter();
@@ -19,8 +21,7 @@ export default function LoginPage() {
       la info solicitada (email y password). 
       Si la promesa se cumple, imprimimos login success
     */
-    auth
-      .signIn(email, password)
+    signIn(email, password)
       .then(() => {
         setError(false);
         //Si la promesa se resuelve, redireccionamos al dashboard
