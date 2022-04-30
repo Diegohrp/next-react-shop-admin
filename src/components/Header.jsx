@@ -133,7 +133,7 @@ export default function Header() {
                     key={item.name}
                     href={item.href}
                     aria-current={item.current ? 'page' : undefined}>
-                    <a
+                    <div
                       className={classNames(
                         item.current
                           ? 'bg-gray-900 text-white'
@@ -141,7 +141,7 @@ export default function Header() {
                         'block px-3 py-2 rounded-md text-base font-medium'
                       )}>
                       {item.name}
-                    </a>
+                    </div>
                   </Link>
                 ))}
               </div>
